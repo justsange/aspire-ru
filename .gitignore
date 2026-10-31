@@ -1,0 +1,13 @@
+# сборки
+*.exe
+*.zip
+build/
+__pycache__/
+# файлы перевода и оригиналы Vectric — не публикуются (см. README)
+installer/payload/
+installer/dllvar/
+installer/help.zip
+installer/gadget/
+installer/Icons_Dark.dll
+src/
+tr/
