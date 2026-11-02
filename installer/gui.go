@@ -963,7 +963,9 @@ func wndProc(hwnd, msg, wp, lp uintptr) uintptr {
 }
 
 func main() {
-	pSetProcessDpiAwarenessCx.Call(^uintptr(3)) // PER_MONITOR_AWARE_V2 (-4)
+	if pSetProcessDpiAwarenessCx.Find() == nil { // Windows 10 1703+; на Windows 7/8 просто пропускаем
+		pSetProcessDpiAwarenessCx.Call(^uintptr(3)) // PER_MONITOR_AWARE_V2 (-4)
+	}
 	exe, _ := os.Executable()
 	app.dirs = findAspire()
 	// тёмная тема уже стоит — галочка включена, снятие галочки при переустановке её выключит
@@ -987,17 +989,22 @@ func main() {
 	hwnd, _, _ := pCreateWindowExW.Call(0, uintptr(unsafe.Pointer(cls)), uintptr(unsafe.Pointer(u16("Русификатор Aspire — A&A мастерская форм"))),
 		style, 100, 100, 400, 300, 0, 0, hinst, 0)
 	app.hwnd = hwnd
-	d, _, _ := pGetDpiForWindow.Call(hwnd)
+	var d uintptr
+	if pGetDpiForWindow.Find() == nil { // Windows 10 1607+
+		d, _, _ = pGetDpiForWindow.Call(hwnd)
+	}
 	if d == 0 {
 		d = 96
 	}
 	app.dpi = int(d)
 	app.makeResources()
 	// тёмный заголовок окна (Windows 10/11)
-	dark := int32(1)
-	pDwmSetWindowAttr.Call(hwnd, 20, uintptr(unsafe.Pointer(&dark)), 4)
-	capc := cSide
-	pDwmSetWindowAttr.Call(hwnd, 35, uintptr(unsafe.Pointer(&capc)), 4)
+	if pDwmSetWindowAttr.Find() == nil {
+		dark := int32(1)
+		pDwmSetWindowAttr.Call(hwnd, 20, uintptr(unsafe.Pointer(&dark)), 4)
+		capc := cSide
+		pDwmSetWindowAttr.Call(hwnd, 35, uintptr(unsafe.Pointer(&capc)), 4)
+	}
 
 	r := RECT{0, 0, app.sc(LW), app.sc(LH)}
 	pAdjustWindowRectEx.Call(uintptr(unsafe.Pointer(&r)), style, 0, 0)

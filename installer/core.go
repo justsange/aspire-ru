@@ -57,7 +57,7 @@ const (
 	enuHash      = "7db9b0b1f001254db0ed561190bf665988d671654c8ec49c3800e2fb91cec29b" // Resources_ENU.dll из Aspire 12.5
 	origRusHash  = "eaf66ac97c36005b02f7ca1558950d49fa69963e2d188e4c959bbefb0c62b9f9" // заводской Resources_RUS.dll
 	backupFolder = "_RU_backup_original"
-	version      = "2.6.3"
+	version      = "2.6.4"
 )
 
 // ---------- журнал (выводится в окне установки) ----------
