@@ -11,6 +11,7 @@ var (
 	kernel32 = syscall.NewLazyDLL("kernel32.dll")
 	msimg32  = syscall.NewLazyDLL("msimg32.dll")
 	shell32  = syscall.NewLazyDLL("shell32.dll")
+	ole32    = syscall.NewLazyDLL("ole32.dll")
 	dwmapi   = syscall.NewLazyDLL("dwmapi.dll")
 
 	pRegisterClassExW         = user32.NewProc("RegisterClassExW")
@@ -60,10 +61,15 @@ var (
 	pMoveToEx               = gdi32.NewProc("MoveToEx")
 	pLineTo                 = gdi32.NewProc("LineTo")
 
-	pGetModuleHandleW = kernel32.NewProc("GetModuleHandleW")
-	pAlphaBlend       = msimg32.NewProc("AlphaBlend")
-	pShellExecuteW    = shell32.NewProc("ShellExecuteW")
-	pDwmSetWindowAttr = dwmapi.NewProc("DwmSetWindowAttribute")
+	pGetModuleHandleW     = kernel32.NewProc("GetModuleHandleW")
+	pAlphaBlend           = msimg32.NewProc("AlphaBlend")
+	pShellExecuteW        = shell32.NewProc("ShellExecuteW")
+	pGetDriveTypeW        = kernel32.NewProc("GetDriveTypeW")
+	pSHBrowseForFolderW   = shell32.NewProc("SHBrowseForFolderW")
+	pSHGetPathFromIDListW = shell32.NewProc("SHGetPathFromIDListW")
+	pCoInitialize         = ole32.NewProc("CoInitialize")
+	pCoTaskMemFree        = ole32.NewProc("CoTaskMemFree")
+	pDwmSetWindowAttr     = dwmapi.NewProc("DwmSetWindowAttribute")
 )
 
 const (

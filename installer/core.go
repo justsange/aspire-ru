@@ -57,7 +57,7 @@ const (
 	enuHash      = "7db9b0b1f001254db0ed561190bf665988d671654c8ec49c3800e2fb91cec29b" // Resources_ENU.dll из Aspire 12.5
 	origRusHash  = "eaf66ac97c36005b02f7ca1558950d49fa69963e2d188e4c959bbefb0c62b9f9" // заводской Resources_RUS.dll
 	backupFolder = "_RU_backup_original"
-	version      = "2.6.5"
+	version      = "2.6.6"
 )
 
 // ---------- журнал (выводится в окне установки) ----------
@@ -100,17 +100,22 @@ func findAspire() []string {
 	roots = append(roots, `C:\Program Files`)
 	seen := map[string]bool{}
 	var out []string
+	var cands []string
 	for _, r := range roots {
 		m, _ := filepath.Glob(filepath.Join(r, "Aspire*"))
-		for _, d := range m {
-			k := strings.ToLower(d)
-			if seen[k] {
-				continue
-			}
-			seen[k] = true
-			if _, err := os.Stat(filepath.Join(d, "Language", "RUS", "x64", "Resources_RUS.dll")); err == nil {
-				out = append(out, d)
-			}
+		cands = append(cands, m...)
+	}
+	// Aspire на другом диске или в нестандартной папке: реестр и обход дисков
+	cands = append(cands, registryCandidates()...)
+	cands = append(cands, extraCandidates()...)
+	for _, d := range cands {
+		k := strings.ToLower(d)
+		if seen[k] {
+			continue
+		}
+		seen[k] = true
+		if looksLikeAspire(d) {
+			out = append(out, d)
 		}
 	}
 	return out

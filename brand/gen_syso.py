@@ -20,13 +20,13 @@ def version_res():
         body += b''.join(children)
         return struct.pack('<HHH', 6 + len(body), len(value), typ) + body
     strings = [s('CompanyName', 'A&A — мастерская форм'), s('FileDescription', 'Русификатор Vectric Aspire 12.5'),
-               s('FileVersion', '2.6.5.0'), s('ProductName', 'Русификатор Aspire от A&A'), s('ProductVersion', '2.6.5'),
+               s('FileVersion', '2.6.6.0'), s('ProductName', 'Русификатор Aspire от A&A'), s('ProductVersion', '2.6.6'),
                s('LegalCopyright', 'Бесплатно. aa-forma.ru'), s('OriginalFilename', 'Aspire_RU_Setup.exe')]
     st = node('041904B0', strings, typ=1)
     sfi = node('StringFileInfo', [st], typ=1)
     var = node('Translation', [], value=struct.pack('<HH', 0x0419, 1200), typ=0)
     vfi = node('VarFileInfo', [var], typ=1)
-    ffi = struct.pack('<13I', 0xFEEF04BD, 0x00010000, 0x00020000, 0x00060005, 0x00020000, 0x00060005, 0x3f, 0, 0x40004, 1, 0, 0, 0)
+    ffi = struct.pack('<13I', 0xFEEF04BD, 0x00010000, 0x00020000, 0x00060006, 0x00020000, 0x00060006, 0x3f, 0, 0x40004, 1, 0, 0, 0)
     return node('VS_VERSION_INFO', [sfi, vfi], value=ffi, typ=0)
 
 sizes = [16, 32, 48, 64, 256]

@@ -80,6 +80,7 @@ type App struct {
 	errText   string
 	funOrder  []int
 	verOK     map[string]bool
+	manual    map[string]bool // папки, указанные пользователем вручную — ставим туда даже без «12.5» в имени
 	inst      map[string]bool
 	bak       map[string]bool
 }
@@ -374,12 +375,12 @@ func (a *App) paint(dc uintptr, W, H int32) {
 		y += bxh + S(20)
 		// что нашли
 		if len(a.dirs) == 0 {
-			p.text("⚠  Aspire не найден в Program Files. Установите Aspire 12.5 и запустите установщик снова.", x, y, cw, S(50), "body", cAccent, DT_WORDBREAK)
+			y += p.text("⚠  Aspire 12.5 не найден ни на одном диске. Если он установлен в необычную папку — укажите её кнопкой ниже.", x, y, cw, S(50), "body", cAccent, DT_WORDBREAK) + S(6)
 		} else {
 			for _, d := range a.dirs {
 				st := "✓  Найден Aspire: " + d
 				c := cOk
-				if !is125(d) {
+				if !a.isTarget(d) {
 					st = "—  " + d + " — другая версия Aspire, её не трогаем"
 					c = cMuted
 					if a.inst[d] || a.bak[d] {
@@ -410,6 +411,12 @@ func (a *App) paint(dc uintptr, W, H int32) {
 			p.text("Удалить русификацию", x, by, S(220), bh, "body", c, DT_LEFT|DT_VCENTER|DT_SINGLELINE)
 			a.addHit("uninstall", x, by, S(170), bh)
 		}
+		// ручной выбор папки — для Aspire на другом диске или в нестандартной папке
+		bxx := x
+		if anyBak {
+			bxx = x + S(190)
+		}
+		a.button(p, "browse", "Указать папку…", bxx, by, S(170), bh, false, true)
 		a.button(p, "cancel", "Отмена", W-S(44)-bw-S(12)-S(120), by, S(120), bh, false, true)
 		a.button(p, "next", "Далее  →", W-S(44)-bw, by, bw, bh, true, len(a.dirs) > 0)
 
@@ -737,6 +744,22 @@ func (a *App) click(id string) {
 		openURL("https://aa-forma.ru")
 	case id == "cancel":
 		pDestroyWindow.Call(a.hwnd)
+	case id == "browse":
+		d := browseForAspire(a.hwnd)
+		if d == "" {
+			return
+		}
+		if !looksLikeAspire(d) {
+			msgBox(a.hwnd, "В этой папке нет Aspire:\n"+d+"\n\nНужна папка, в которой лежат папки x64 и Language (обычно называется «Aspire 12.5»).", "Это не папка Aspire", MB_OK|MB_ICONWARNING)
+			return
+		}
+		if a.manual == nil {
+			a.manual = map[string]bool{}
+		}
+		a.manual[d] = true
+		if a.addDir(d) {
+			a.refresh()
+		}
 	case id == "next":
 		a.page = 1
 	case id == "back":
@@ -786,18 +809,23 @@ func (a *App) click(id string) {
 func (a *App) brokenDirs() []string {
 	var out []string
 	for _, d := range a.dirs {
-		if !is125(d) && a.bak[d] {
+		if !a.isTarget(d) && a.bak[d] {
 			out = append(out, d)
 		}
 	}
 	return out
 }
 
+// isTarget — Aspire 12.5 или папка, которую пользователь указал сам
+func (a *App) isTarget(d string) bool {
+	return is125(d) || a.manual[d]
+}
+
 // targets — куда ставим: только Aspire 12.5.
 func (a *App) targets() []string {
 	var out []string
 	for _, d := range a.dirs {
-		if is125(d) {
+		if a.isTarget(d) {
 			out = append(out, d)
 		}
 	}

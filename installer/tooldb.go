@@ -68,7 +68,7 @@ func toolDBFiles(aspireDir string) []string {
 	if pd == "" {
 		pd = `C:\ProgramData`
 	}
-	ver := strings.TrimSpace(strings.TrimPrefix(filepath.Base(aspireDir), "Aspire"))
+	ver := aspireVer(aspireDir)
 	var out []string
 	for _, n := range []string{"tools.vtdb", "tools.vtdb.vectric"} {
 		p := filepath.Join(pd, "Vectric", "Aspire", "V"+ver, "ToolDatabase", n)

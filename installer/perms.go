@@ -19,7 +19,7 @@ func aspireDataDir(aspireDir string) string {
 	if pd == "" {
 		pd = `C:\ProgramData`
 	}
-	ver := strings.TrimSpace(strings.TrimPrefix(filepath.Base(aspireDir), "Aspire"))
+	ver := aspireVer(aspireDir)
 	return filepath.Join(pd, "Vectric", "Aspire", "V"+ver)
 }
 
