@@ -397,6 +397,14 @@ func (a *App) paint(dc uintptr, W, H int32) {
 				}
 			}
 		}
+		// ручной выбор папки — для Aspire на другом диске или в нестандартной папке
+		y += S(4)
+		bc := cMuted
+		if a.hover == "browse" {
+			bc = cAccent
+		}
+		p.text("Aspire стоит в другом месте? Указать папку вручную…", x, y, cw, S(22), "small", bc, DT_SINGLELINE)
+		a.addHit("browse", x, y, S(420), S(22))
 		anyBak := false
 		for _, d := range a.dirs {
 			if a.bak[d] {
@@ -411,12 +419,6 @@ func (a *App) paint(dc uintptr, W, H int32) {
 			p.text("Удалить русификацию", x, by, S(220), bh, "body", c, DT_LEFT|DT_VCENTER|DT_SINGLELINE)
 			a.addHit("uninstall", x, by, S(170), bh)
 		}
-		// ручной выбор папки — для Aspire на другом диске или в нестандартной папке
-		bxx := x
-		if anyBak {
-			bxx = x + S(190)
-		}
-		a.button(p, "browse", "Указать папку…", bxx, by, S(170), bh, false, true)
 		a.button(p, "cancel", "Отмена", W-S(44)-bw-S(12)-S(120), by, S(120), bh, false, true)
 		a.button(p, "next", "Далее  →", W-S(44)-bw, by, bw, bh, true, len(a.dirs) > 0)
 
