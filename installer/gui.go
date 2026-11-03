@@ -398,13 +398,18 @@ func (a *App) paint(dc uintptr, W, H int32) {
 			}
 		}
 		// ручной выбор папки — для Aspire на другом диске или в нестандартной папке
-		y += S(4)
-		bc := cMuted
-		if a.hover == "browse" {
-			bc = cAccent
+		y += S(8)
+		if len(a.dirs) == 0 {
+			// ничего не нашли — кнопка на виду
+			a.button(p, "browse", "Указать папку Aspire…", x, y, S(260), S(36), true, true)
+		} else {
+			bc := cAccent
+			if a.hover == "browse" {
+				bc = cText
+			}
+			p.text("Aspire стоит в другом месте?  Указать папку вручную →", x, y, cw, S(24), "h", bc, DT_SINGLELINE)
+			a.addHit("browse", x, y, S(480), S(24))
 		}
-		p.text("Aspire стоит в другом месте? Указать папку вручную…", x, y, cw, S(22), "small", bc, DT_SINGLELINE)
-		a.addHit("browse", x, y, S(420), S(22))
 		anyBak := false
 		for _, d := range a.dirs {
 			if a.bak[d] {
