@@ -630,6 +630,7 @@ func (a *App) buildTasks() []task {
 		{"Делаем копию оригинальных файлов", 4 * time.Second, each(doBackup)},
 		{"Ставим перевод меню, окон и сообщений", 9 * time.Second, each(doInterface)},
 	}...)
+	t = append(t, task{"Возвращаем права на базу фрез и настройки Aspire", 3 * time.Second, each(fixDataPerms)})
 	if a.opt["mat"] {
 		t = append(t, task{"Переводим библиотеку материалов", 5 * time.Second, each(func(d string) error { renameTextures(d, true); return nil })})
 		t = append(t, task{"Переводим базу фрез: «Концевые», «Сферические», «МДФ»", 4 * time.Second, each(func(d string) error { translateToolDB(d, true); return nil })})
