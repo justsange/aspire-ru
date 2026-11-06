@@ -11,3 +11,5 @@ installer/gadget/
 installer/Icons_Dark.dll
 src/
 tr/
+gadgets-installer/gadget/
+gadgets-installer/logo.png
